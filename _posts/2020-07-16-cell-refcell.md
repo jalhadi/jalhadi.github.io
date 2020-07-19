@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Cell? RefCell?"
+title: "Cell, RefCell, and Interior Mutability?"
 date: 2020-07-16 19:15:43 -0700
 categories: jekyll update
 ---
@@ -36,7 +36,7 @@ and error
   |     ^^^^^^ cannot assign twice to immutable variable
 ```
 
-Change `let x = 1'` to `let mut x = 1`, and we solve the problem!. The program correctly prints
+Change `let x = 1` to `let mut x = 1`, and we solve the problem!. The program correctly prints
 
 ```
 The value of x is 2.
@@ -48,12 +48,13 @@ Ok cool, that's easy. Now what do we do when we want to update a variable in a f
 fn add_and_print(x: &mut i32) {
     *x += 1;
     println!("The value of x in add_and_print is {}.", x);
+    // mutable reference to x is dropped
 }
 
 fn main() {
-    let mut x = 1;
-    add_and_print(&mut x);
-    x += 1;
+    let mut x = 1; // Declare a mutable variable x
+    add_and_print(&mut x); // Modify x in function
+    x += 1; // Modify x again
     println!("The value of x in main is {}.", x);
 }
 ```
@@ -108,10 +109,10 @@ struct XStruct<'a> {
 }
 
 fn main() {
-    let mut x = 1;
-    let x_struct = XStruct { x: &mut x };
+    let mut x = 1; // Declare a mutable variable x
+    let x_struct = XStruct { x: &mut x }; // Pass a mutable reference to x
 
-    x += 1;
+    x += 1; // Modify x...
 
     println!("The value of x_struct is {:?}.", x_struct);
     println!("The value of x is {:?}.", x);
@@ -132,7 +133,7 @@ and the compiler says...
    |                                                -------- borrow later used here
 ```
 
-Ughhhhhhh, we can't do this. We've made a mutable borrow when defining `x_struct`, and it hasn't gone out of scope yet. Rust WILL NOT let us do this. To understand why we can't do this, let's review Rust's borrow rules:
+Ughhhhhhh, we can't do this. We've made a mutable borrow when defining `x_struct`, and it hasn't gone out of scope yet. The compiler WILL NOT let us do this. To understand why we can't do this, let's review Rust's borrow rules:
 
 1. You can have one mutable reference.
    OR (exclusive)
@@ -140,16 +141,18 @@ Ughhhhhhh, we can't do this. We've made a mutable borrow when defining `x_struct
 
 So, our issue in the above example is that we have two references to `x`, and we want those references to be mutable. (Yeah I know, `x` in `main` isn't borrowed, `x` owns it's value, but I'd still think it be able to mutate it's own data).
 
-You may be asking, why do we have these rules in the first place? The reason is to prevent data races, you can get nondeterministic errors, which are just awful to deal with (I won't go deeper into data races as it's a whole other topic in computer science and programming).
+You may be asking, why do we have these rules in the first place? The reason is to prevent data races, which can result in nondeterministic errors, which are just awful to deal with (I won't go deeper into data races as it's a whole other topic in computer science and programming).
 
 Ok, we have these rules, BUT I WANT MULTIPLE MUTABLE REFERENCES. That's where interior mutability comes to the rescue!
 
 The gist of interior mutability is that we can wrap something that's _mutable_ in a structure that is _immutable_. We can then create multiple immutable references to that thing (which follows rule #2 above), get a mutable reference when we're ready, and then mutate the value! (We'll discuss the caveats later. No free lunch, right?)
 
-So, `Cell` and `RefCell` are the tortillas of this interior mutability burrito... (ok I'll stop). Here's an example of our failed borrow example using `RefCell`.
+### `RefCell<T>`, YAY!
+
+So, think of `RefCell` as the tortilla of the interior mutability burrito... (ok I'll stop). Here's an example of our failed borrow example using `RefCell`.
 
 ```rust
-use std::cell::{RefCell};
+use std::cell::RefCell;
 
 #[derive(Debug)]
 struct XStruct<'a> {
@@ -157,18 +160,18 @@ struct XStruct<'a> {
 }
 
 fn add_and_print(x_struct: &XStruct) {
-    *x_struct.x.borrow_mut() += 1;
+    *x_struct.x.borrow_mut() += 1; // Mutably borrow and dereference the underlying data
 
     println!("The value of x_struct in add_and_print is {:?}.", x_struct);
 }
 
 fn main() {
-    let ref_cell_x = RefCell::new(1);
-    let x_struct = XStruct { x: &ref_cell_x };
+    let ref_cell_x = RefCell::new(1); // ref_cell_x is immutable
+    let x_struct = XStruct { x: &ref_cell_x }; // Pass an immutable reference to ref_cell_x
 
-    add_and_print(&x_struct);
+    add_and_print(&x_struct); // Pass an immutable reference to x_struct
 
-    *ref_cell_x.borrow_mut() += 1;
+    *ref_cell_x.borrow_mut() += 1; // Modify ref_cell_x
 
     println!("Final value of x_struct is {:?}.", x_struct);
     println!("Final value of x is {:?}.", ref_cell_x);
@@ -187,10 +190,10 @@ Final value of x is RefCell { value: 3 }.
 
 ### But what about `Cell<T>`?
 
-`Cell<T>` is just a different way to accomplish interior mutability. With `RefCell<T>`, you get a reference to the underlying data (note the `Ref` part). With `Cell<T>`, you indirectly interact with the wrapped value by using `set` and `get` (and some other fancy methods). Here's the same example from above rewrittien using `Cell<T>`.
+`Cell<T>` is just a different way to accomplish interior mutability. With `RefCell<T>`, you get a reference to the underlying data (note the `Ref` part). With `Cell<T>`, you indirectly interact with the wrapped value by using `set` and `get` (and some other fancy methods). Here's the same example from above rewritten using `Cell<T>`.
 
 ```rust
-use std::cell::{Cell};
+use std::cell::Cell;
 
 #[derive(Debug)]
 struct XStruct<'a> {
@@ -240,23 +243,23 @@ use std::cell::{RefCell};
 fn main() {
     let cell = RefCell::new(1);
 
-    let mut cell_ref_1 = cell.borrow_mut();
+    let mut cell_ref_1 = cell.borrow_mut(); // Mutably borrow the underlying data
     *cell_ref_1 += 1;
     println!("RefCell value: {:?}", cell_ref_1);
 
-    let mut cell_ref_2 = cell.borrow_mut();
+    let mut cell_ref_2 = cell.borrow_mut(); // Mutably borrow the data again (cell_ref_1 is still in scope though...)
     *cell_ref_2 += 1;
     println!("RefCell value: {:?}", cell_ref_2);
 }
 ```
 
-This program compiles, but it panics halfway through running.
+This program compiles, but panics halfway through running.
 
 ```
 thread 'main' panicked at 'already borrowed: BorrowMutError'
 ```
 
-What? Isn't the compiler supposed to prevent these types of reference errors? Yes, for "normal" mutable references. The reference rules stated earilier still apply, they're just enforced at runtime when using `RefCell`.
+What? Isn't the compiler supposed to prevent these types of reference errors? Yes, for "normal" mutable references. The reference rules stated earlier still apply, they're just enforced at runtime when using `RefCell`.
 
 And this is the double edged sword of `RefCell`s. There are times where we need more flexibility than just a singular mutable reference. `RefCell` gives us this flexibility, but at the cost of not checking our references statically.
 
