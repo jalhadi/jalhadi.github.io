@@ -2,18 +2,16 @@
 layout: post
 title: "Cell, RefCell, and Interior Mutability?"
 date: 2020-07-16 19:15:43 -0700
-categories: jekyll update
+categories: rust
 ---
 
-In my self study of Rust, I've run into concepts that are different than anything else I've used, and have had a hard time wrapping my head around. The purpose and usage of `Cell` and `RefCell` is one of those concepts. I said to myself, "why not write a blog, it'll help you, and maybe help someone else?". Putting my thoughts and inquiries in writing has been helpful for me, and I hope it's just as helpful for you!
+In my self study of Rust, I've run into concepts that are different than anything else I've seen in other languages, and have had a hard time wrapping my head around. The purpose and usage of `Cell` and `RefCell` is one of those concepts. I said to myself, "why not write a blog, it'll help you, and maybe help someone else!". Putting my thoughts and inquiries in writing has been helpful for me, and I hope it's just as helpful for you!
 
 ### Background
 
 To understand what these things are, we need to understand _Interior Mutability_ and how it relates to "normal" Rust.
 
-What's interior mutability? Interior mutability is different than the _Inherited Mutability_ that we are so used to (even if we didn't know the technical term).
-
-Normally, when you want to have a mutable variable in Rust, you would define a variable as `mut`. The following is what you don't want.
+What's interior mutability? Interior mutability is different than the _Inherited Mutability_ that we are so used to (even if we didn't know the technical term). Variables in Rust exhibit inherited mutability when they are defined using the `mut` keyword; this is the standard way of declaring a mutable variable. The following code is what you don't want, producing the error below it.
 
 ```rust
 fn main() {
@@ -23,7 +21,7 @@ fn main() {
 }
 ```
 
-and error
+Error!
 
 ```
   |
@@ -36,7 +34,7 @@ and error
   |     ^^^^^^ cannot assign twice to immutable variable
 ```
 
-Change `let x = 1` to `let mut x = 1`, and we solve the problem!. The program correctly prints
+Change `let x = 1` to `let mut x = 1`, and we solve the problem! The program correctly prints
 
 ```
 The value of x is 2.
@@ -264,3 +262,7 @@ What? Isn't the compiler supposed to prevent these types of reference errors? Ye
 And this is the double edged sword of `RefCell`s. There are times where we need more flexibility than just a singular mutable reference. `RefCell` gives us this flexibility, but at the cost of not checking our references statically.
 
 I hope this explanation of interior mutability, `Cell`, and `RefCell` was helpful to you! Feel free to contact me if you any comments, suggestions, or just need to correct me!
+
+### Acknowledgments
+
+I was inspired to write this post after reading [_Learning Rust With Entirely Too Many Linked Lists_](https://rust-unofficial.github.io/too-many-lists/index.html), specifically the section ["A Bad Safe Deque"](https://rust-unofficial.github.io/too-many-lists/fourth.html) where the author explores building a doubly-linked list in Rust. I recommend that section, and the whole book in general, to get a better understanding of what a real world use case for these concepts might look like.
