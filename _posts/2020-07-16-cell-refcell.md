@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Cell, RefCell, and Interior Mutability?"
+title: "Cell, RefCell, and Interior Mutability in Rust"
 date: 2020-07-16 19:15:43 -0700
 categories: rust
 ---
