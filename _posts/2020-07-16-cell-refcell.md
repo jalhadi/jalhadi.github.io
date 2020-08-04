@@ -231,7 +231,7 @@ See? Same result. As you can tell, the only difference is that we first had to `
 
 ### When should I use `RefCell<T>` vs. `Cell<T>`?
 
-There are two main differences between `RefCell` and `Cell`. First, types wrapped in `Cell` must implement the `Copy` trait while those in `RefCell` don't need to. This makes sense. When calling `get` on a `Cell`, you are getting a copy of the wrapped data, whereas the methods associated with `RefCell` are `borrow` and `borrow_mut`, which return references to the underlying data. Copying data back and forth does come at a performance cost, especially if the wrapped data is big, therefore making `RefCell` an attractive candidate.
+There are two main differences between `RefCell` and `Cell`. ~First, types wrapped in `Cell` must implement the `Copy` trait while those in `RefCell` don't need to.~ This makes sense. When calling `get` on a `Cell`, you are getting a copy of the wrapped data, whereas the methods associated with `RefCell` are `borrow` and `borrow_mut`, which return references to the underlying data. Copying data back and forth does come at a performance cost, especially if the wrapped data is big, therefore making `RefCell` an attractive candidate.
 
 The second difference is that `RefCell`'s references are checked at runtime, which comes at a performance cost of verifying reference counts and possibly being completely wrong about your borrowing logic and causing your program to panic (not good); you can't cause panics using `set` and `get` with `Cell` as you're not modifying the data through reference. Here's an example of what can go wrong with `RefCell`.
 
