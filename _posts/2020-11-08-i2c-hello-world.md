@@ -1,4 +1,9 @@
-## An actual "Hello, World!" for Microcontrollers (in Rust!)
+---
+layout: post
+title: "An actual "Hello, World!" for Microcontrollers (in Rust!)"
+date: 2020-11-08
+categories: rust, microcontrollers
+---
 
 Over the past few months, I've become interested in learning how to program embedded devices, especially in Rust. I've been drawn in by the idea that I can connect off-the-shelf components to build physical systems. I'm also one of those people that's convinced that Rust is the future with it's type system and memory safety, two aspects that I think will greatly benefit all low level systems.
 
@@ -6,7 +11,7 @@ Even though theres a bunch of useful information and tutorials available, embedd
 
 That's all to say that I've been pretty out of my comfort zone learning embedded programming. Something that was lacking for me though was a satisfying "Hello, World!" introduction. As you may know, you can't really "print" things on embedded devices. There's no screen on a microcontroller. There's (probably) not a file system, so you can't redirect logging to a file. You can use semihosting for logging to your computer, but that's not really the intended use of a microcontroller (I do want to accomplish more than just debug). The "Hello, World!" of MCUs is blinking a light on your board, which serves the intended purpose of creating a simple program to spark further interest.
 
-Therefore, this post isn't really about replacing the blinking light program, but more an exploration of how one could go about printing "Hello, World!" using an MCU. So I decided to buy an LCD screen to accomplish this task. This post will show how to use initialize and use the I2C protocol on a microcontroller to communicate with an LCD screen, but only using the primatives available in the corresponding HAL crate. I will be using an STM32F303DISCOVERY board and a 16x2 LCD screen that supports I2C (they should all have the same Hitachi HD44780 microcontroller).
+Therefore, this post isn't really about replacing the blinking light program, but more an exploration of how one could go about printing "Hello, World!" using an MCU. So I decided to buy an LCD screen to accomplish this task. This post will show how to use initialize and use the I2C protocol on a microcontroller to communicate with an LCD screen, but only using the primatives available in the corresponding HAL crate. I will be using an STM32F303DISCOVERY board and a 16x2 LCD screen that supports I2C (they should all have the same Hitachi HD44780 microcontroller). I've made the code [available here](https://github.com/jalhadi/i2c-hello-world) so that you can follow along.
 
 Before going any further, this post isn't meant as an introduction to absolute beginners of microcontroller planning. I'm assuming you have understand how a microcontroller works (at a very high level). If you're new to microcontrollers, I recommend checking out the Rust [Discovery book](https://docs.rust-embedded.org/discovery/index.html) book and going through the examples there.
 
@@ -262,11 +267,11 @@ Yup, that's it. We did all the heavy lifting with the initialization, if only it
 
 [Code repository](https://github.com/jalhadi/i2c-hello-world)
 
-[STM32DISCOVERY User Manual](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwjMi-fui8LsAhXIvJ4KHZ_WCH8QFjADegQIARAC&url=https%3A%2F%2Fwww.st.com%2Fresource%2Fen%2Fuser_manual%2Fdm00063382-discovery-kit-with-stm32f303vc-mcu-stmicroelectronics.pdf&usg=AOvVaw2ZcHeLRZSUO_DN79_skLWZ)
+[STM32DISCOVERY User Manual](https://www.st.com/resource/en/user_manual/dm00063382-discovery-kit-with-stm32f303vc-mcu-stmicroelectronics.pdf)
 
-[STM32F303 Reference Manual](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwjEv-aCjMLsAhWEsZ4KHZTkDDgQFjAAegQIBRAC&url=https%3A%2F%2Fwww.st.com%2Fresource%2Fen%2Freference_manual%2Fdm00043574-stm32f303xb-c-d-e-stm32f303x6-8-stm32f328x8-stm32f358xc-stm32f398xe-advanced-arm-based-mcus-stmicroelectronics.pdf&usg=AOvVaw1xFdPOPWaMFQYA3svvRE5u)
+[STM32F303 Reference Manual](https://www.st.com/content/ccc/resource/technical/document/reference_manual/4a/19/6e/18/9d/92/43/32/DM00043574.pdf/files/DM00043574.pdf/jcr:content/translations/en.DM00043574.pdf)
 
-[STM32F3xB/C Data Sheet](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwjwg_6bjMLsAhWXuJ4KHepGDLUQFjAAegQIBBAC&url=https%3A%2F%2Fwww.st.com%2Fresource%2Fen%2Fdatasheet%2Fstm32f303vc.pdf&usg=AOvVaw39UV6bVUEI4YMYK4naC0Sq)
+[STM32F3xB/C Data Sheet](https://www.st.com/content/ccc/resource/technical/document/datasheet/f2/1f/e1/41/ef/59/4d/50/DM00058181.pdf/files/DM00058181.pdf/jcr:content/translations/en.DM00058181.pdf)
 
 [Zero cost abstractions](https://rust-embedded.github.io/book/static-guarantees/zero-cost-abstractions.html)
 
