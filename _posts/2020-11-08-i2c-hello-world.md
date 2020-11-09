@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 'An actual "Hello, World!" for Microcontrollers (in Rust!)'
+title: 'An Actual "Hello, World!" for Microcontrollers (in Rust!)'
 date: 2020-11-08 19:00:00 -0700
 categories: rust, microcontrollers
 ---
