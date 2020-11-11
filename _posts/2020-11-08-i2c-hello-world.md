@@ -213,7 +213,7 @@ In the last case, where the controller is waiting for the last 4 bits of a parti
 After all that, we know that the controller is in 8-bit mode, and we now set the controller to 4-bit mode.
 
 ```rust
-write4bits(&mut i2c, 0x02 << 4); // Set to 4-bit mode (while in 8-bit mode)
+    write4bits(&mut i2c, 0x02 << 4); // Set to 4-bit mode (while in 8-bit mode)
 ```
 
 We only need to send one instruction to put the controller in 4-bit mode as we are currently in 8-bit mode. At this point, we just need to configure the controller to our specific use case! I'll paste my remaining initialization code below, but I won't go into it as it's dependent upon what you want!
